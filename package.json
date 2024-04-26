@@ -7,7 +7,7 @@
   "repository": {
     "url": "https://github.com/tduyng/yadt"
   },
-  "version": "0.0.1",
+  "version": "0.1.1",
   "engines": {
     "vscode": "^1.41.0"
   },
@@ -20,7 +20,7 @@
       {
         "label": "yadt",
         "uiTheme": "vs-dark",
-        "path": "./themes/yadt-color-theme.json"
+        "path": "./themes/ref.json"
       }
     ]
   }
