@@ -7,7 +7,7 @@
   "repository": {
     "url": "https://github.com/tduyng/yadt"
   },
-  "version": "0.1.0",
+  "version": "0.0.1",
   "engines": {
     "vscode": "^1.41.0"
   },

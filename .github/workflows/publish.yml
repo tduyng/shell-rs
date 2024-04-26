@@ -1,35 +1,24 @@
 on:
   push:
-    tags: [v*]
+    tags:
+      - "*"
 
+name: Deploy Extension
 jobs:
-  publish-openvsx:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20.12.2
-      - run: npm install
+          node-version: 20
+      - run: npm ci
       - name: Publish to Open VSX Registry
-        uses: HaaLeo/publish-vscode-extension@v0
+        uses: HaaLeo/publish-vscode-extension@v1
         with:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
-
-  publish-marketplace:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.12.2
-      - run: npm install
       - name: Publish to Visual Studio Marketplace
-        uses: HaaLeo/publish-vscode-extension@v0
+        uses: HaaLeo/publish-vscode-extension@v1
         with:
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
