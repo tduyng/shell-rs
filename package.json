@@ -18,9 +18,9 @@
   "contributes": {
     "themes": [
       {
-        "label": "yadt-lab",
+        "label": "yadt",
         "uiTheme": "vs-dark",
-        "path": "./themes/yadt-lab.json"
+        "path": "./themes/yadt-color-theme.json"
       }
     ]
   }
