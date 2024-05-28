@@ -33,7 +33,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "shell-rs"
+name = "shell-starter-rust"
 version = "0.1.0"
 dependencies = [
  "anyhow",
