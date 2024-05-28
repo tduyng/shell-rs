@@ -21,13 +21,14 @@ fn main() {
 }
 
 fn execute_command(command: &str) -> Result<(), String> {
-    if command.starts_with("exit ") {
-        exit_command(command)?;
-    } else if command.starts_with("echo ") {
-        echo_command(command)?;
-    } else {
-        println!("{}: command not found", command)
+    let command_name = command.split_whitespace().next().unwrap_or_default();
+    match command_name {
+        "exit" => exit_command(command)?,
+        "echo" => echo_command(command)?,
+        "type" => type_command(command)?,
+        _ => println!("{}: command not found", command),
     }
+
     Ok(())
 }
 
@@ -48,5 +49,18 @@ fn exit_command(command: &str) -> Result<(), String> {
 fn echo_command(command: &str) -> Result<(), String> {
     let text = command.trim_start_matches("echo ");
     println!("{}", text);
+    Ok(())
+}
+
+fn type_command(command: &str) -> Result<(), String> {
+    let command_name = command.trim_start_matches("type ");
+    let builtins = ["exit", "echo", "type"];
+
+    if builtins.contains(&command_name) {
+        println!("{} is a shell builtin", command_name);
+    } else {
+        println!("{} not found", command_name);
+    }
+
     Ok(())
 }
