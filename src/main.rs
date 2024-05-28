@@ -1,4 +1,3 @@
-#[allow(unused_imports)]
 use std::io::{self, Write};
 
 fn main() {
@@ -15,31 +14,39 @@ fn main() {
             continue;
         }
 
-        if command.starts_with("exit") {
-            exit_command(&command);
-        }
-
-        if !is_valid_command(command) {
-            println!("{}: command not found", command)
+        if let Err(err) = execute_command(command) {
+            println!("{}", err);
         }
     }
 }
 
-fn is_valid_command(_command: &str) -> bool {
-    false
+fn execute_command(command: &str) -> Result<(), String> {
+    if command.starts_with("exit ") {
+        exit_command(command)?;
+    } else if command.starts_with("echo ") {
+        echo_command(command)?;
+    } else {
+        println!("{}: command not found", command)
+    }
+    Ok(())
 }
 
-fn exit_command(command: &str) {
-    let exit_status = match command.split_whitespace().nth(1) {
-        Some(status) => match status.parse::<i32>() {
-            Ok(code) if code >= 0 && code <= 255 => code,
-            _ => {
-                eprintln!("Invalid exit status, using default value (0)");
-                0
-            }
-        },
-        None => 0,
-    };
+fn exit_command(command: &str) -> Result<(), String> {
+    let exit_status = command
+        .split_whitespace()
+        .nth(1)
+        .unwrap_or_default()
+        .parse::<i32>()
+        .map_err(|_| "Invalid exit status")?;
 
+    if !(0..=255).contains(&exit_status) {
+        eprintln!("Invalid exit status, using default value (0)");
+    }
     std::process::exit(exit_status);
+}
+
+fn echo_command(command: &str) -> Result<(), String> {
+    let text = command.trim_start_matches("echo ");
+    println!("{}", text);
+    Ok(())
 }
