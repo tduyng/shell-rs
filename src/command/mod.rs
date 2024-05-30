@@ -1,6 +1,7 @@
 use echo_command::EchoCommand;
 use exit_command::ExitCommand;
 use external_command::ExternalCommand;
+use pwd_command::PwdCommand;
 use type_command::TypeCommand;
 
 use crate::utils::find_in_path;
@@ -8,12 +9,14 @@ use crate::utils::find_in_path;
 mod echo_command;
 mod exit_command;
 mod external_command;
+mod pwd_command;
 mod type_command;
 
 pub enum Command {
     Exit(ExitCommand),
     Echo(EchoCommand),
     Type(TypeCommand),
+    Pwd(PwdCommand),
     External(ExternalCommand),
 }
 
@@ -46,6 +49,7 @@ impl Command {
                 let cmd_name = command.trim_start_matches("type ");
                 Ok(Self::Type(TypeCommand::new(cmd_name.to_string())))
             }
+            "pwd" => Ok(Self::Pwd(PwdCommand::new())),
             _ => {
                 if let Some(path) = find_in_path(command_name) {
                     Ok(Self::External(ExternalCommand::new(
@@ -64,6 +68,7 @@ impl Command {
             Command::Exit(cmd) => cmd.execute(),
             Command::Echo(cmd) => cmd.execute(),
             Command::Type(cmd) => cmd.execute(),
+            Command::Pwd(cmd) => cmd.execute(),
             Command::External(cmd) => cmd.execute(),
         }
     }
