@@ -12,11 +12,22 @@ impl CdCommand {
     }
 
     pub fn execute(&self) -> Result<(), String> {
-        if self.path.is_absolute() {
-            env::set_current_dir(&self.path)
-                .map_err(|_| format!("cd: {}: No such file or directory", self.path.display()))
+        let new_path = if self.path.is_absolute() {
+            self.path.clone()
         } else {
-            Err("cd: only absolute paths are supported in this stage".to_string())
+            env::current_dir()
+                .unwrap_or_else(|_| PathBuf::from("/"))
+                .join(&self.path)
+        };
+
+        if new_path.exists() {
+            env::set_current_dir(&new_path)
+                .map_err(|_| format!("cd: {}: No such file or directory", new_path.display()))
+        } else {
+            Err(format!(
+                "cd: {}: No such file or directory",
+                new_path.display()
+            ))
         }
     }
 }
