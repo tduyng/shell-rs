@@ -12,7 +12,11 @@ impl CdCommand {
     }
 
     pub fn execute(&self) -> Result<(), String> {
-        let new_path = if self.path.is_absolute() {
+        let new_path = if self.path == PathBuf::from("~") {
+            env::var("HOME")
+                .map(PathBuf::from)
+                .unwrap_or_else(|_| PathBuf::from("/"))
+        } else if self.path.is_absolute() {
             self.path.clone()
         } else {
             env::current_dir()
