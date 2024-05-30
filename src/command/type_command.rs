@@ -10,7 +10,7 @@ impl TypeCommand {
     }
 
     pub fn execute(&self) -> Result<(), String> {
-        let builtins = ["exit", "echo", "type"];
+        let builtins = ["exit", "echo", "type", "pwd", "cd"];
 
         if builtins.contains(&self.command_name.as_str()) {
             println!("{} is a shell builtin", self.command_name);
