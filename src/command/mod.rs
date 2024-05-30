@@ -1,3 +1,4 @@
+use cd_command::CdCommand;
 use echo_command::EchoCommand;
 use exit_command::ExitCommand;
 use external_command::ExternalCommand;
@@ -6,6 +7,7 @@ use type_command::TypeCommand;
 
 use crate::utils::find_in_path;
 
+mod cd_command;
 mod echo_command;
 mod exit_command;
 mod external_command;
@@ -17,6 +19,7 @@ pub enum Command {
     Echo(EchoCommand),
     Type(TypeCommand),
     Pwd(PwdCommand),
+    Cd(CdCommand),
     External(ExternalCommand),
 }
 
@@ -50,6 +53,13 @@ impl Command {
                 Ok(Self::Type(TypeCommand::new(cmd_name.to_string())))
             }
             "pwd" => Ok(Self::Pwd(PwdCommand::new())),
+            "cd" => {
+                if let Some(path) = args.first() {
+                    Ok(Self::Cd(CdCommand::new(path.clone())))
+                } else {
+                    Err("cd: missing argument".to_string())
+                }
+            }
             _ => {
                 if let Some(path) = find_in_path(command_name) {
                     Ok(Self::External(ExternalCommand::new(
@@ -69,6 +79,7 @@ impl Command {
             Command::Echo(cmd) => cmd.execute(),
             Command::Type(cmd) => cmd.execute(),
             Command::Pwd(cmd) => cmd.execute(),
+            Command::Cd(cmd) => cmd.execute(),
             Command::External(cmd) => cmd.execute(),
         }
     }
