@@ -1,20 +1,28 @@
 use echo_command::EchoCommand;
 use exit_command::ExitCommand;
+use external_command::ExternalCommand;
 use type_command::TypeCommand;
+
+use crate::utils::find_in_path;
 
 mod echo_command;
 mod exit_command;
+mod external_command;
 mod type_command;
 
 pub enum Command {
     Exit(ExitCommand),
     Echo(EchoCommand),
     Type(TypeCommand),
+    External(ExternalCommand),
 }
 
 impl Command {
     pub fn parse(command: &str) -> Result<Self, String> {
-        let command_name = command.split_whitespace().next().unwrap_or_default();
+        let mut parts = command.split_whitespace();
+        let command_name = parts.next().unwrap_or_default();
+        let args: Vec<String> = parts.map(|s| s.to_string()).collect();
+
         match command_name {
             "exit" => {
                 let status = command
@@ -38,7 +46,16 @@ impl Command {
                 let cmd_name = command.trim_start_matches("type ");
                 Ok(Self::Type(TypeCommand::new(cmd_name.to_string())))
             }
-            _ => Err(format!("{}: command not found", command)),
+            _ => {
+                if let Some(path) = find_in_path(command_name) {
+                    Ok(Self::External(ExternalCommand::new(
+                        path.to_string_lossy().to_string(),
+                        args,
+                    )))
+                } else {
+                    Err(format!("{}: command not found", command_name))
+                }
+            }
         }
     }
 
@@ -47,6 +64,7 @@ impl Command {
             Command::Exit(cmd) => cmd.execute(),
             Command::Echo(cmd) => cmd.execute(),
             Command::Type(cmd) => cmd.execute(),
+            Command::External(cmd) => cmd.execute(),
         }
     }
 }

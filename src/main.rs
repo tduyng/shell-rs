@@ -3,11 +3,11 @@ use std::io::{self, Write};
 use command::Command;
 
 mod command;
+mod utils;
 
 fn main() -> Result<(), String> {
     loop {
-        print!("$ ");
-        io::stdout().flush().unwrap();
+        print_prompt();
 
         let stdin = io::stdin();
         let mut input = String::new();
@@ -22,6 +22,11 @@ fn main() -> Result<(), String> {
             eprintln!("{}", e);
         }
     }
+}
+
+fn print_prompt() {
+    print!("$ ");
+    io::stdout().flush().unwrap();
 }
 
 fn execute_command(command: &str) -> Result<(), String> {
